@@ -3,14 +3,14 @@
 #Giovanni Andretta Carbonero
 #Bruno Lopes dos Reis
 
-import cv2
-import matplotlib.pyplot as plt
 import os
 import sys
-import numpy as np
 import time
 import getpass
 from hashlib import sha512
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
 
 user = []
 secret = []
