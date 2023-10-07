@@ -29,14 +29,14 @@ def train_classifier(faces, face_ID):
 def draw_rect(test_img, face):
     (x, y, w, h) = face
     cv2.rectangle(test_img, (x, y), (x + w, y + h), (0, 255, 0), thickness = 3)
-    
+
 def put_text(test_img, text, x, y):
     cv2.putText(test_img, text, (x, y), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 1)
-    
+
 def labels_for_training_data(directory):
     faces = []
     faceid = []
-    
+
     for path, subdirnames, filenames in os.walk(directory):
         for filename in filenames:
             if filename.startswith("."):
@@ -61,7 +61,7 @@ def labels_for_training_data(directory):
 def valid():
     global faceid, confidence
     confidence = 0
-    
+
     test_img = cv2.imread('temp/temp.jpg')
     faces_detected, gray_img = face_detection(test_img)
     print("face detected",faces_detected)
@@ -81,7 +81,7 @@ def valid():
         print("Label", label)
         draw_rect(test_img, face)
         predict_name = name[label]
-        
+
         #Verifica se é ou não a pessoa e coloca o nome
         if confidence > 68:
             continue
@@ -90,31 +90,33 @@ def valid():
     for (x, y, w, h) in faces_detected:
         cv2.rectangle(test_img, (x, y), (x + w, y + h), (255, 0, 0), thickness = 1)
         pass
-    
+
     resized_img = cv2.resize(test_img, (1000, 700))
     cv2.imshow("Face Detection", resized_img)
-    
+
     #Temporizador da janela de validacao
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    
+
     #Verifica se é ou não a pessoa autorizada
     if confidence > 68 or confidence == 0:
         opt = str(input("\n\n\nRosto não identificado. \n\nDeseja fazer a validação por usuario e senha? ('S' para sim): "))
         opt = opt.upper()
         opt = opt[0]
-        
+
         if opt == "S":
             login()
         else:
             sys.exit()
     else:
         print("\n\n\t\tBem vindo sr(a). " + user[0] + "\n")
-        
+
+
 def login():
     opt = 3
     while True:
-        print("\n\n\t\tLogin")
+        print("\n\n"+"="*50)
+        print("\n\t\tLogin")
         usuario = str(input("\nDigite seu usuario: "))
         senha = str(getpass.getpass("Digite sua senha: "))
         cripto = criptografia(senha)
@@ -185,12 +187,12 @@ def face():
             break
     cv2.destroyAllWindows()
     camera.release()
-    
+
 def preenchendo_valores():
     with open('secrets/usuario.txt', 'r') as arquivo_u:
         for valor in arquivo_u:
             user.append(valor)
-            
+
     with open('secrets/senha.txt', 'r') as arquivo_s:
         for valor in arquivo_s:
             secret.append(valor)
@@ -204,14 +206,14 @@ def cadastro():
     with open('secrets/usuario.txt', 'w') as arquivo_u:
         usuario = str(input("Digite seu nome: "))
         arquivo_u.write(str(usuario))
-        
+
     with open('secrets/senha.txt', 'w') as arquivo_s:
         senha = str(getpass.getpass("Digite sua senha: "))
         cripto = criptografia(senha)
         arquivo_s.write(str(cripto))
-        
 
-def inic():    
+
+def inic():
     with open('secrets/usuario.txt') as arquivo:
         arquivo.seek(0)
         first_char = arquivo.read(1)
@@ -227,7 +229,7 @@ def inic():
                 valid()
             else:
                 sys.exit()
-            
+
 def menu():
     while True:
         print("="*50)
@@ -237,7 +239,7 @@ def menu():
         print("[0] - Sair\n")
 
         print("="*50)
-    
+
         aux = int(input("Digite sua opção: "))
 
         if aux == 0:
@@ -247,42 +249,42 @@ def menu():
         else:
             print("\nOpcao invalida!\n\nTente novamente...\n")
             time.sleep(2)
-    
+
 def edit():
     print("="*50)
     print("\t\tEditor de fotos")
     opt = str(input("\n\nDigite o Path: "))
     image = cv2.imread(opt)
-    
+
     print("\n")
     print("="*50)
-    
+
     print("\t\tFoto Cinza\n")
     imagecinza = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     imagemCinza = cv2.cvtColor(imagecinza, cv2.IMREAD_GRAYSCALE)
     plt.imshow(imagemCinza)
     plt.show()
-    
+
     print("\n")
     print("="*50)
-    
+
     print("\t\tFoto Negativa\n")
     img_neg = -1 * image + 255
     plt.figure(figsize=(5,5))
     plt.imshow(img_neg, cmap = "gray")
     plt.show()
-    
+
     print("\n")
     print("="*50)
-    
+
     print("\t\tHistograma\n")
     hist = cv2.calcHist([image],[0],None,[256],[0,256])
     valorintenso = np.array([x for x in range(hist.shape[0])])
     plt.bar(valorintenso, hist[:,0], width = 5)
     plt.show()
-    
+
 def main():
     inic()
     menu()
-    
+
 main()
